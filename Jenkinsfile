@@ -16,7 +16,7 @@ pipeline {
                     echo "=== 📥 檢出 DIP 專案程式碼 ==="
                     
                     // 如果使用 Git，取消註解下一行
-                    // git branch: 'main', url: 'https://github.com/你的用戶名/DIP.git'
+                    git branch: 'main', url: 'https://github.com/yPinn/DIP.git'
                     
                     echo "✅ 程式碼檢出完成"
                     sh '''

@@ -1,0 +1,79 @@
+﻿@model List<KnowledgeBrowsingViewModel>
+
+@{
+    ViewData["Title"] = "知識瀏覽";
+    var currentFilter = Context.Request.Query["status"].ToString().ToLower();
+    var currentUserIdStr = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    int currentUserId = 0;
+    if (!string.IsNullOrEmpty(currentUserIdStr))
+    {
+        int.TryParse(currentUserIdStr, out currentUserId);
+    }
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form method="get" class="mb-3">
+    <label class="me-3">篩選狀態：</label>
+    <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="status" value="all"
+               @(currentFilter == "all" || string.IsNullOrEmpty(currentFilter) ? "checked" : "") />
+        <label class="form-check-label">全部</label>
+    </div>
+    <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="status" value="published"
+               @(currentFilter == "published" ? "checked" : "") />
+        <label class="form-check-label">已發佈</label>
+    </div>
+    <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="status" value="unpublished"
+               @(currentFilter == "unpublished" ? "checked" : "") />
+        <label class="form-check-label">未發佈</label>
+    </div>
+    <button type="submit" class="btn btn-primary ms-3">查詢</button>
+</form>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-light">
+        <tr class="text-center">
+            <th>標題</th>
+            <th>狀態</th>
+            <th>建立日期</th>
+            <th>瀏覽數 / 留言數</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <a href="@Url.Action("Details", "Knowledge", new { id = item.KfFileId })">
+                            @item.Title
+                        </a>
+                    </td>
+                    <td class="text-center">@(item.Status == 1 ? "Unpublished" : "Published")</td>
+                    <td class="text-center">@item.CreateDate.ToString("yyyy-MM-dd")</td>
+                    <td class="text-center">@item.VisitCount / @item.CommentCount</td>
+                    <td class="text-center">
+                        @if (item.CreateUserId == currentUserId)
+                        {
+                             <a href="@Url.Action("Edit", "Knowledge", new { id = item.KfFileId })">編輯</a>
+                            <span> | </span>
+                            <a href="@Url.Action("Delete", "Knowledge", new { id = item.KfFileId })">刪除</a>
+                        }
+                    </td>
+                </tr>
+
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5" class="text-center">目前無資料。</td>
+            </tr>
+        }
+    </tbody>
+</table>

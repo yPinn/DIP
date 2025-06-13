@@ -1,0 +1,41 @@
+﻿@model KmsTypeViewModel
+
+<h2>新增分類</h2>
+
+<form asp-controller="Settings" asp-action="CreateF" method="post">
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" asp-for="ParentId" />
+
+    <div class="form-group">
+        <label asp-for="KtNameTw">分類名稱（繁體）</label>
+        <input asp-for="KtNameTw" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="KtNameCn">分類名稱（簡體）</label>
+        <input asp-for="KtNameCn" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="KtNameJp">分類名稱（日文）</label>
+        <input asp-for="KtNameJp" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="KtNameUs">分類名稱（英文）</label>
+        <input asp-for="KtNameUs" class="form-control" required />
+    </div>
+
+    <input type="submit" value="新增" class="btn btn-primary" />
+</form>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <p>@error.ErrorMessage</p>
+        }
+    </div>
+}

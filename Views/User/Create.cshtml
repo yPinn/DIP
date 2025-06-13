@@ -1,0 +1,61 @@
+﻿@model DIP.Models.SysUser
+
+<h2>Create User</h2>
+
+<form asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+
+    <div class="form-group mt-3">
+        <label asp-for="UserId"></label>
+        <input asp-for="UserId" class="form-control" />
+        <span asp-validation-for="UserId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mt-3">
+        <label asp-for="UserLogid"></label>
+        <input asp-for="UserLogid" class="form-control" />
+        <span asp-validation-for="UserLogid" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mt-3">
+        <label asp-for="UserPwd"></label>
+        <input asp-for="UserPwd" class="form-control" type="password" />
+        <span asp-validation-for="UserPwd" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mt-3">
+        <label asp-for="UserName"></label>
+        <input asp-for="UserName" class="form-control" />
+        <span asp-validation-for="UserName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mt-3">
+        <label asp-for="UserMail"></label>
+        <input asp-for="UserMail" class="form-control" />
+        <span asp-validation-for="UserMail" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mt-3">
+        <label asp-for="UserDesc"></label>
+        <input asp-for="UserDesc" class="form-control" />
+        <span asp-validation-for="UserDesc" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mt-3">
+        <label asp-for="Activeflag"></label>
+        <select asp-for="Activeflag" class="form-control">
+            <option value="Y">啟用</option>
+            <option value="N">停用</option>
+        </select>
+        <span asp-validation-for="Activeflag" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">建立</button>
+    <a asp-action="Index" class="btn btn-secondary mt-3 mx-2">取消</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

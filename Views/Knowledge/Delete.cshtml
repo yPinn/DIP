@@ -1,0 +1,26 @@
+﻿@model KmsKnowledge
+
+<h2>刪除確認</h2>
+
+<div>
+    <h3>確定要刪除以下知識嗎？</h3>
+    <dl class="row">
+        <dt class="col-sm-2">標題</dt>
+        <dd class="col-sm-10">@Model.KfFileName</dd>
+
+        <dt class="col-sm-2">建立時間</dt>
+        <dd class="col-sm-10">@Model.CreateDate.ToString("yyyy-MM-dd HH:mm")</dd>
+
+        <dt class="col-sm-2">簡介</dt>
+        <dd class="col-sm-10">@Model.KfBrief</dd>
+    </dl>
+
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="KfFileId" />
+        <button type="submit" class="btn btn-danger">確認刪除</button>
+        <a asp-action="Home" class="btn btn-secondary">取消</a>
+    </form>
+
+
+
+</div>

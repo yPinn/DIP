@@ -1,0 +1,22 @@
+﻿@model CommentViewModel
+
+@{
+    ViewData["Title"] = "編輯留言";
+}
+
+<h4>編輯留言</h4>
+<hr />
+<form asp-action="Edit" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="KcId" />
+    <input type="hidden" asp-for="KfFileId" />
+
+    <div class="form-group">
+        <label asp-for="KcContent">留言內容</label>
+        <textarea asp-for="KcContent" class="form-control" rows="4"></textarea>
+        <span asp-validation-for="KcContent" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-2">儲存變更</button>
+    <a asp-action="List" asp-route-kfFileId="@Model.KfFileId" class="btn btn-secondary mt-2">取消</a>
+</form>

@@ -1,0 +1,61 @@
+﻿@model List<KnowledgeIndexViewModel>
+
+@{
+    ViewData["Title"] = "Knowledge Maintenance";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<a asp-action="Create" class="btn btn-primary">Add</a>
+
+<table class="table table-bordered table-striped mt-3">
+    <thead class="text-center">
+        <tr>
+            <th>Title</th>
+            <th>Brief</th>
+            <th>Article Classification</th>
+            <th>Article Tags</th>
+            <th>Read</th>
+            <th>Praise</th>
+            <th>Tread</th>
+            <th>Status</th>
+            <th>Enable Flag</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.KfFileName</td>
+                <td>@item.KfBrief</td>
+                <td>@item.TypeName</td>
+                <td>@item.KfLabel</td>
+                <td class="text-center">@item.KfReadNum</td>
+                <td class="text-center">@item.KfPraiseNum</td>
+                <td class="text-center">@item.KfTreadNum</td>
+                <td class="text-center">
+                    @{
+                        string statusName = item.KfStatus switch
+                        {
+                            1 => "Draft",
+                            2 => "Private",
+                            3 => "Public",
+                            _ => "unknown"
+                        };
+
+                        string publishState = item.KfStatus == 1 ? "Unpublished" : "Published";
+                    }
+                    <div class="fw-bold">@publishState</div>
+                    <small class="text-muted">@statusName</small>
+                </td>
+                <td class="text-center">@item.ActiveFlag</td>
+                <td class="text-center">
+                    <a asp-action="Details" asp-route-id="@item.KfFileId" class="btn btn-sm btn-info mx-1">Details</a>
+                    <a asp-action="Edit" asp-route-id="@item.KfFileId" class="btn btn-sm btn-warning mx-1">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@item.KfFileId" class="btn btn-sm btn-danger mx-1">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

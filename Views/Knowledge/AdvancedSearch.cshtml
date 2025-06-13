@@ -1,0 +1,50 @@
+﻿@model KnowledgeViewModel
+
+@{
+    ViewData["Title"] = "進階知識搜尋";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form method="post" asp-action="AdvancedSearch" asp-controller="Knowledge" class="mb-4">
+    <div class="mb-2">
+        <input type="text" name="Keyword" value="@Model.Keyword" placeholder="請輸入關鍵字..." class="form-control" style="width:300px; display:inline-block;" />
+    </div>
+    <div class="mb-2">
+        <select name="SelectedCategoryId" class="form-select" style="width:300px; display:inline-block;">
+            @foreach (var cat in Model.Categories)
+            {
+                var isSelected = cat.Value == Model.SelectedCategoryId?.ToString() ? "selected" : "";
+                @Html.Raw($"<option value=\"{cat.Value}\" {isSelected}>{cat.Text}</option>")
+            }
+        </select>
+
+
+    </div>
+    <button type="submit" class="btn btn-primary">搜尋</button>
+    <a href="@Url.Action("Home", "Knowledge")" class="btn btn-secondary ms-2">返回首頁</a>
+</form>
+
+@if (Model.SearchResults != null && Model.SearchResults.Any())
+{
+    <div class="search-results">
+        <p>共找到 <strong>@Model.SearchResults.Count</strong> 筆與「<strong>@Model.Keyword</strong>」相關的知識資料：</p>
+        <ul class="list-group">
+            @foreach (var item in Model.SearchResults)
+            {
+                <li class="list-group-item">
+                    <div class="fw-bold">
+                        <a asp-action="Details" asp-controller="Knowledge" asp-route-id="@item.KfFileId">
+                            @item.KfFileName
+                        </a>
+                    </div>
+                    <div class="text-muted small">更新時間：@item.TxDate.ToString("yyyy-MM-dd HH:mm")</div>
+                </li>
+            }
+        </ul>
+    </div>
+}
+else if (Model.SearchResults != null)
+{
+    <div class="alert alert-info">查無符合條件的知識資料。</div>
+}

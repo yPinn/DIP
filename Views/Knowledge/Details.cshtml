@@ -1,0 +1,123 @@
+﻿@model KnowledgeDetailViewModel
+
+@{
+    ViewData["Title"] = "知識內容";
+}
+
+<div class="container mt-4">
+    <div class="card mb-4 position-relative">
+        <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                @* 標題 *@
+                <h3 class="card-title mb-0 fw-bold flex-grow-1">
+                    @Model.Knowledge.KfFileName
+                </h3>
+
+                <div class="d-flex align-items-center gap-3 ms-3">
+                    <div class="text-muted small d-flex align-items-center gap-1">
+                        <span>👁️</span>
+                        <span>@(Model.Knowledge.KfReadNum ?? 0)</span>
+                    </div>
+
+                    <div class="btn-group" role="group">
+                        <form asp-action="React" method="post" class="d-inline-flex align-items-center me-2 mb-0">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="fileId" value="@Model.Knowledge.KfFileId" />
+                            <input type="hidden" name="reactionType" value="P" />
+                            <button type="submit" class="btn btn-sm @(Model.UserReaction == "P" ? "btn-success" : "btn-outline-secondary") d-flex align-items-center gap-1">
+                                <span>👍</span>
+                                <span>@(Model.Knowledge.KfPraiseNum ?? 0)</span>
+                            </button>
+                        </form>
+                        <form asp-action="React" method="post" class="d-inline-flex align-items-center mb-0">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="fileId" value="@Model.Knowledge.KfFileId" />
+                            <input type="hidden" name="reactionType" value="T" />
+                            <button type="submit" class="btn btn-sm @(Model.UserReaction == "T" ? "btn-danger" : "btn-outline-secondary") d-flex align-items-center gap-1">
+                                <span>👎</span>
+                                <span>@(Model.Knowledge.KfTreadNum ?? 0)</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <form asp-controller="Knowledge" asp-action="ToggleAttention" method="post" class="me-2 mb-0">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="kfFileId" value="@Model.Knowledge.KfFileId" />
+                        <input type="hidden" name="type" value="K" />
+                        <input type="hidden" name="returnUrl" value="@Url.Action("Details", "Knowledge", new { id = Model.Knowledge.KfFileId })" />
+                        <button type="submit" class="btn btn-sm @(Model.KaTypeK_AttentionExists ? "btn-warning" : "btn-outline-warning") d-flex align-items-center gap-1">
+                            <span>@(Model.KaTypeK_AttentionExists ? "🔖" : "➕")</span>
+                            <span>@(Model.KaTypeK_AttentionExists ? "已關注" : "關注")</span>
+                        </button>
+                    </form>
+
+
+                    @if (Model.CanEditOrDelete)
+                    {
+                        <div class="btn-group" role="group">
+                            <a asp-controller="Knowledge" asp-action="Edit" asp-route-id="@Model.Knowledge.KfFileId" class="btn btn-sm btn-outline-primary">編輯</a>
+
+                            <form asp-controller="Knowledge" asp-action="Delete" method="post"
+                                  onsubmit="return confirm('確定刪除此篇知識內容嗎？此動作無法復原！');" class="mb-0">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@Model.Knowledge.KfFileId" />
+                                <button type="submit" class="btn btn-sm btn-outline-danger">刪除</button>
+                            </form>
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+
+            <p class="text-muted mb-1"><strong>作者：</strong> @(Model.Knowledge.CreateUser?.UserName ?? "匿名")</p>
+            <p class="text-muted mb-1"><strong>分類：</strong> @Model.FileTypeName</p>
+            <p class="fs-5 my-3"><strong>簡介：</strong> @Model.Knowledge.KfBrief</p>
+            <p class="text-muted mb-1"><strong>標籤：</strong> <span class="badge bg-secondary">@Model.Knowledge.KfLabel</span></p>
+            <p class="text-muted">
+                <strong>狀態：</strong>
+                @{
+                    var statusText = Model.Knowledge.KfStatus switch
+                    {
+                        1 => "草稿",
+                        2 => "私人",
+                        3 => "公開",
+                        _ => "未知"
+                    };
+                }
+                @statusText
+            </p>
+
+
+            <hr />
+            <h5 class="mb-3">內容</h5>
+            <div class="border rounded p-3 bg-light">
+                @Html.Raw(Model.Knowledge.KfFileContent)
+            </div>
+        </div>
+    </div>
+
+    <hr />
+
+    <h4 class="mb-3">留言區</h4>
+    <div class="mb-4">
+        @await Html.PartialAsync("_CommentList", Model.Comments)
+    </div>
+
+    <div class="card mb-5">
+        <div class="card-header">
+            <h5 class="mb-0">新增留言</h5>
+        </div>
+        <div class="card-body">
+            <form asp-controller="Comment" asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="KfFileId" value="@Model.Knowledge.KfFileId" />
+                <input type="hidden" name="KcParentId" value="" />
+                <div class="mb-3">
+                    <textarea name="KcContent" rows="4" class="form-control" placeholder="請輸入留言內容..." required></textarea>
+                </div>
+                <button type="submit" class="btn btn-success">送出留言</button>
+            </form>
+        </div>
+    </div>
+</div>

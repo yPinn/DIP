@@ -1,0 +1,41 @@
+﻿@model List<KmsKnowledge>
+
+@{
+    ViewData["Title"] = "草稿列表";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@if (!Model.Any())
+{
+    <p>目前沒有草稿資料。</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>標題</th>
+                <th>建立時間</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var draft in Model)
+            {
+                <tr>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@draft.KfFileId">
+                            @draft.KfFileName
+                        </a>
+                    </td>
+                    <td>@draft.CreateDate.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@draft.KfFileId" class="btn btn-sm btn-primary">編輯</a>
+                        <a asp-action="Delete" asp-route-id="@draft.KfFileId" class="btn btn-sm btn-danger ms-2">刪除</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

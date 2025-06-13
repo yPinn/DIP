@@ -1,0 +1,121 @@
+﻿@model List<KmsTypeViewModel>
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery antiforgery
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<h2>分類管理</h2>
+
+<input type="hidden" id="antiForgeryToken" name="__RequestVerificationToken" value="@antiforgery.GetAndStoreTokens(Context).RequestToken" />
+
+<div class="mb-3">
+    <button class="btn btn-success me-2" onclick="createRoot()">新增根分類</button>
+    <span id="node-actions" style="display:none;">
+        <button class="btn btn-primary me-1" onclick="createChild()">新增子分類</button>
+        <button class="btn btn-warning me-1" onclick="editNode()">編輯</button>
+        <button class="btn btn-danger" onclick="deleteNode()">刪除</button>
+    </span>
+</div>
+
+<div id="category-tree">
+    @Html.Partial("_CategoryTreePartial", Model)
+</div>
+
+<script>
+    let selectedNodeId = null;
+
+    function toggleChildren(iconElem) {
+        const li = iconElem.closest("li.tree-node");
+        const childrenDiv = li.querySelector(".children");
+        if (!childrenDiv) return;
+
+        if (childrenDiv.style.display === "none") {
+            childrenDiv.style.display = "block";
+            iconElem.textContent = "[-]";
+        } else {
+            childrenDiv.style.display = "none";
+            iconElem.textContent = "[+]";
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const items = document.querySelectorAll("#category-tree li.tree-node[data-id]");
+
+        items.forEach(function (li) {
+            li.addEventListener("click", function (event) {
+                event.stopPropagation();
+
+                items.forEach(el => el.classList.remove("selected"));
+                li.classList.add("selected");
+                selectedNodeId = li.dataset.id;
+
+                document.getElementById("node-actions").style.display = "inline-block";
+            });
+        });
+
+        document.addEventListener("click", function (event) {
+            if (!event.target.closest(".tree-node")) {
+                document.querySelectorAll(".tree-node").forEach(el => el.classList.remove("selected"));
+                selectedNodeId = null;
+                document.getElementById("node-actions").style.display = "none";
+            }
+        });
+    });
+
+    function createRoot() {
+        window.location.href = `/Settings/CreateF`;
+    }
+
+    function createChild() {
+        if (selectedNodeId) {
+            window.location.href = `/Settings/CreateF?parentId=${selectedNodeId}`;
+        }
+    }
+
+    function editNode() {
+        if (selectedNodeId) {
+            window.location.href = `/Settings/EditF/${selectedNodeId}`;
+        }
+    }
+
+    function deleteNode() {
+        if (selectedNodeId) {
+            if (confirm("確定要刪除該分類嗎？")) {
+                const token = document.getElementById('antiForgeryToken').value;
+
+                fetch('/Settings/DeleteF', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': token
+                    },
+                    body: JSON.stringify({ id: parseInt(selectedNodeId) })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("刪除成功");
+                        window.location.reload();
+                    } else {
+                        alert("刪除失敗：" + data.message);
+                    }
+                })
+                .catch(err => alert("發生錯誤：" + err));
+            }
+        }
+    }
+</script>
+
+<style>
+    #category-tree li.tree-node.selected {
+        background-color: #d0e9ff; /* 淡藍色背景，視覺明顯 */
+        border-radius: 4px;
+    }
+
+    #category-tree li.tree-node {
+        cursor: pointer;
+        padding: 4px 8px;
+    }
+</style>

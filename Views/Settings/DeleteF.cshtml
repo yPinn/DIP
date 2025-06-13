@@ -1,0 +1,68 @@
+﻿@{
+    Layout = null; // 根據你實際狀況調整
+}
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="utf-8" />
+    <title>分類管理 - 刪除示範</title>
+    <meta name="viewport" content="width=device-width" />
+</head>
+<body>
+    <h2>分類管理</h2>
+
+    <div id="message" style="color: red; margin-bottom: 1em;"></div>
+
+    <!-- 假設你這邊有一個分類列表，刪除按鈕會呼叫 deleteCategory(id) -->
+    <ul id="categoryList">
+        <li>分類 A <button onclick="deleteCategory(1)">刪除</button></li>
+        <li>分類 B <button onclick="deleteCategory(2)">刪除</button></li>
+        <li>分類 C <button onclick="deleteCategory(3)">刪除</button></li>
+    </ul>
+
+    <!-- ASP.NET Core 防偽 Token -->
+    <form id="antiForgeryForm" method="post" style="display:none;">
+        @Html.AntiForgeryToken()
+    </form>
+
+    <script>
+        async function deleteCategory(id) {
+            if (!confirm("確定要刪除此分類及所有子分類嗎？")) {
+                return;
+            }
+
+            // 取防偽 Token 值
+            const token = document.querySelector('#antiForgeryForm input[name="__RequestVerificationToken"]').value;
+
+            try {
+                const response = await fetch('/Settings/DeleteF', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': token
+                    },
+                    body: JSON.stringify({ id: id })
+                });
+
+                const result = await response.json();
+
+                const msgDiv = document.getElementById('message');
+
+                if (result.success) {
+                    msgDiv.style.color = 'green';
+                    msgDiv.textContent = "刪除成功！頁面將重新整理...";
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    msgDiv.style.color = 'red';
+                    msgDiv.textContent = "刪除失敗: " + result.message;
+                }
+            } catch (error) {
+                document.getElementById('message').textContent = "刪除發生錯誤: " + error;
+            }
+        }
+    </script>
+</body>
+</html>

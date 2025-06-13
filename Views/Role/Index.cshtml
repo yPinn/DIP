@@ -1,0 +1,42 @@
+﻿@model IEnumerable<DIP.Models.SysRole>
+@{
+    ViewData["Title"] = "角色列表";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form method="get" class="mb-3">
+    <div class="input-group" style="width:500px">
+        <!-- 從 ViewData["search"] 取得搜尋字串，不直接用 Request.Query -->
+        <input type="text" name="search" class="form-control" placeholder="搜尋角色名稱..." value="@ViewData["search"]" />
+        <button type="submit" class="btn btn-primary">搜尋</button>
+        <a href="@Url.Action("Create")" class="btn btn-success ms-2">新增角色</a>
+    </div>
+</form>
+
+<table class="table table-bordered table-striped mt-3">
+    <thead class="table-dark text-center">
+        <tr>
+            <th>ID</th>
+            <th>名稱</th>
+            <th>描述</th>
+            <th>狀態</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var role in Model)
+        {
+            <tr>
+                <td class="text-center">@role.RoleId</td>
+                <td>@role.RolenameTw</td>
+                <td>@role.RoleDesc</td>
+                <td class="text-center">@role.ActiveFlag</td>
+                <td class="text-center">
+                    <a href="@Url.Action("Edit", new { id = role.RoleId })" class="btn btn-sm btn-warning">編輯</a>
+                    <a href="@Url.Action("Delete", new { id = role.RoleId })" class="btn btn-sm btn-danger mx-2">刪除</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

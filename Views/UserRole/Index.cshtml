@@ -1,0 +1,27 @@
+﻿@model IEnumerable<DIP.Models.SysUserRole>
+
+@{
+    ViewData["Title"] = "使用者角色列表";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr class="text-center">
+            <th>使用者</th>
+            <th>角色</th>
+            <th>建立時間</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.User?.UserLogid</td>
+                <td>@item.Role?.RolenameTw</td>
+                <td>@item.CreateDate?.ToString("yyyy/MM/dd HH:mm")</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,38 @@
+﻿@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    var httpContext = HttpContextAccessor.HttpContext;
+    var user = httpContext?.User;
+    var isAuthenticated = user?.Identity?.IsAuthenticated ?? false;
+
+    // 從 Session 讀 Layout 設定
+    string layoutMode = httpContext?.Session?.GetString("Layout");
+
+    if (string.IsNullOrEmpty(layoutMode))
+    {
+        if (!isAuthenticated)
+        {
+            layoutMode = "layout2"; // 未登入使用一般用戶 Layout
+        }
+        else
+        {
+            // 嘗試讀 RoleId Claim，判斷是否為管理員
+            var roleIdClaim = user.Claims.FirstOrDefault(c => c.Type == "RoleId")?.Value;
+            if (roleIdClaim == "1")
+            {
+                layoutMode = "layout1"; // 管理員 Layout
+            }
+            else
+            {
+                layoutMode = "layout2"; // 其他一般用戶 Layout
+            }
+        }
+    }
+
+    Layout = layoutMode switch
+    {
+        "layout1" => "_AdminLayout",
+        "layout2" => "_UserLayout",
+        _ => "_Layout"
+    };
+}

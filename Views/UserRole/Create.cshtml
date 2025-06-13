@@ -1,0 +1,33 @@
+﻿@model DIP.ViewModels.UserRoleViewModel
+
+@{
+    ViewData["Title"] = "新增使用者角色";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Create" method="post">
+    <div class="form-group mt-3">
+        <label asp-for="UserId">使用者</label>
+        <select asp-for="UserId" class="form-control" style="width:300px" asp-items="@(new SelectList(Model.Users, "UserId", "UserLogid"))">
+            <option value="">請選擇使用者</option>
+        </select>
+        <span asp-validation-for="UserId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mt-3">
+        <label asp-for="RoleId">角色</label>
+        <select asp-for="RoleId" class="form-control" style="width:300px" asp-items="@(new SelectList(Model.Roles, "RoleId", "RolenameTw"))">
+            <option value="">請選擇角色</option>
+        </select>
+        <span asp-validation-for="RoleId" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">新增</button>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,27 @@
+﻿@model List<KmsTypeViewModel>
+
+<ul class="tree-list">
+    @foreach (var item in Model)
+    {
+        <li class="tree-node" data-id="@item.KtId">
+            @if (item.Children != null && item.Children.Any())
+            {
+                <span onclick="toggleChildren(this)">[-]</span>
+            }
+            else
+            {
+                <span style="display:inline-block; width:20px;"></span>
+            }
+
+            @item.KtNameTw
+
+            @* 子節點遞迴 *@
+            @if (item.Children != null && item.Children.Any())
+            {
+                <div class="children">
+                    @Html.Partial("_CategoryTreePartial", item.Children)
+                </div>
+            }
+        </li>
+    }
+</ul>

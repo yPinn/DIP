@@ -1,0 +1,89 @@
+﻿@model DIP.Models.RoleModuleIndexViewModel
+@using DIP.Helpers
+@{
+    ViewData["Title"] = "角色模組權限管理";
+
+    // 先依 SystemId 分群
+    var groupedModules = Model.Modules
+     .GroupBy(m => m.SystemId)
+     .ToDictionary(g => g.Key, g => g.ToList());
+
+    foreach (var group in groupedModules)
+    {
+        Console.WriteLine($"SystemId: {group.Key}, Count: {group.Value.Count}");
+    }
+
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Index" method="get" class="mb-3">
+    <label for="SelectedRoleId">選擇角色：</label>
+    <select asp-for="SelectedRoleId" asp-items="Model.Roles" class="form-select w-auto d-inline-block"></select>
+    <button type="submit" class="btn btn-primary ms-2">切換角色</button>
+</form>
+
+<form asp-action="Save" method="post">
+    <input type="hidden" asp-for="SelectedRoleId" />
+
+    <div class="row">
+        @{
+            int index = 0;
+            foreach (var group in groupedModules)
+            {
+                var systemId = group.Key;
+                var rootModules = group.Value;
+
+                <div class="col-md-6">
+                    <h4 class="mt-4">@systemId</h4>
+                    @Html.RenderModules(rootModules, "Modules")
+                </div>
+
+                index++;
+                if (index >= 2) break; // 假設只有兩個分組，就只顯示前兩個
+            }
+        }
+    </div>
+
+    <div class="text-center mt-3">
+        <button type="submit" class="btn btn-success">儲存</button>
+    </div>
+</form>
+
+
+@section Scripts {
+    <script>
+        // [+]/[-] 切換按鈕文字
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll("button[data-bs-toggle='collapse']").forEach(button => {
+                const target = document.querySelector(button.dataset.bsTarget);
+                button.addEventListener("click", () => {
+                    setTimeout(() => {
+                        button.textContent = target.classList.contains("show") ? "[+]" : "[-]";
+                    }, 300);
+                });
+            });
+        });
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll(".module-checkbox").forEach(function (checkbox) {
+                checkbox.addEventListener("change", function () {
+                    const parentId = this.dataset.id;
+                    const checked = this.checked;
+
+                    // 找出所有屬於這個 parent 的 checkbox
+                    document.querySelectorAll(`.module-checkbox[data-parent-id='${parentId}']`)
+                        .forEach(child => {
+                            child.checked = checked;
+
+                            // 也遞迴勾選它們的子節點
+                            child.dispatchEvent(new Event('change'));
+                        });
+                });
+            });
+        });
+
+
+    </script>
+}

@@ -1,0 +1,23 @@
+﻿@model KnowledgeCreateViewModel
+
+@{
+    ViewData["Title"] = "新增知識";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Create" method="post">
+    <partial name="_Form" model="Model" />
+    <button type="submit" class="btn btn-primary mt-3">儲存</button>
+    <a asp-action="Index" class="btn btn-secondary mt-3 ms-2">取消</a>
+</form>
+
+@section Scripts {
+    <script src="https://cdn.ckeditor.com/4.21.0/standard/ckeditor.js"></script>
+    <script>
+        CKEDITOR.replace('editor', {
+            height: 250,
+            language: 'zh'
+        });
+    </script>
+}

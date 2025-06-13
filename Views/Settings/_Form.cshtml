@@ -1,0 +1,21 @@
+﻿@model KmsType
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+<div class="form-group">
+    <label asp-for="KtNameTw"></label>
+    <input asp-for="KtNameTw" class="form-control" />
+    <span asp-validation-for="KtNameTw" class="text-danger"></span>
+</div>
+
+<div class="form-group">
+    <label asp-for="ParentId"></label>
+    <select asp-for="ParentId" asp-items="ViewBag.ParentList" class="form-control"></select>
+    <span asp-validation-for="ParentId" class="text-danger"></span>
+</div>
+
+<div class="form-group">
+    <label asp-for="SeqNo"></label>
+    <input asp-for="SeqNo" type="number" class="form-control" />
+    <span asp-validation-for="SeqNo" class="text-danger"></span>
+</div>

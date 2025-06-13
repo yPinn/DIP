@@ -1,0 +1,33 @@
+﻿@model IEnumerable<DIP.Models.KmsFriendlink>
+@{
+    ViewData["Title"] = "友情連結";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<p>
+    <a asp-action="CreateLink" class="btn btn-success">新增友情連結</a>
+</p>
+
+<table class="table table-bordered table-striped">
+    <thead class="text-center">
+        <tr>
+            <th>名稱</th>
+            <th>連結</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var link in Model)
+        {
+            <tr>
+                <td>@link.NameTw</td>
+                <td><a href="@link.Link" target="_blank" rel="noopener noreferrer">@link.Link</a></td>
+                <td class="text-center">
+                    <a asp-action="EditLink" asp-route-id="@link.LinkSeq" class="btn btn-sm btn-primary">編輯</a>
+                    <a asp-action="DeleteLink" asp-route-id="@link.LinkSeq" class="btn btn-sm btn-danger mx-2">刪除</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

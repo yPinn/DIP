@@ -1,0 +1,47 @@
+﻿@model List<CommentIndexViewModel>
+
+@{
+    ViewData["Title"] = "我的留言紀錄";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-light">
+        <tr class="text-center">
+            <th>留言內容</th>
+            <th>所屬知識</th>
+            <th>留言時間</th>
+            <th>回覆數</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            foreach (var comment in Model)
+            {
+                <tr>
+                    <td>
+                        <a href="@Url.Action("Details", "Knowledge", new { id = comment.KnowledgeId })#comment-@comment.CommentId">
+                            @comment.CommentContent
+                        </a>
+                    </td>
+                    <td>
+                        <a href="@Url.Action("Details", "Knowledge", new { id = comment.KnowledgeId })">
+                            @comment.KnowledgeTitle
+                        </a>
+                    </td>
+
+                    <td>@(comment.CommentTime?.ToString("yyyy-MM-dd HH:mm"))</td>
+                    <td class="text-center">@comment.ReplyCount</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4" class="text-center">目前沒有留言資料。</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,35 @@
+﻿@model List<KnowledgeSummaryViewModel>
+
+@{
+    ViewData["Title"] = "更多知識內容";
+}
+
+<h2 class="mb-4">更多知識內容（共 @Model.Count 筆）</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">目前沒有可顯示的知識內容。</div>
+}
+else
+{
+    <div class="list-group">
+        @foreach (var item in Model)
+        {
+            <a asp-controller="Knowledge" asp-action="Details" asp-route-id="@item.KfFileId" class="list-group-item list-group-item-action mb-3">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1 fw-bold">@item.KfFileName</h5>
+                    <small class="text-muted">@item.TxDate.ToString("yyyy-MM-dd")</small>
+                </div>
+                <p class="mb-1 text-truncate">@item.KfBrief</p>
+                <small class="text-muted d-flex flex-wrap gap-3">
+                    <span>📂 類別：@item.KfTypeName</span>
+                    <span>💬 留言數：@item.CommentCount</span>
+                    <span>👁️ 閱讀次數：@item.KfReadNum</span>
+                    <span>👍 讚數：@item.KfPraiseNum</span>
+                    <span>👎 踩數：@item.KfTreadNum</span>
+                    <span>📌 狀態：@(item.KfStatus == 1 ? "草稿" : item.KfStatus == 2 ? "私人" : "公開")</span>
+                </small>
+            </a>
+        }
+    </div>
+}

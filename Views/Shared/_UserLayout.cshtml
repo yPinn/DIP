@@ -1,0 +1,210 @@
+﻿@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    var isAuthenticated = HttpContextAccessor.HttpContext?.User?.Identity?.IsAuthenticated ?? false;
+    var userName = isAuthenticated
+        ? HttpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == "DisplayName")?.Value
+        : "";
+    var user = HttpContextAccessor.HttpContext?.User;
+    var roleId = user?.Claims.FirstOrDefault(c => c.Type == "RoleId")?.Value;
+    bool isAdmin = roleId == "1";
+}
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - DIP</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/DIP.styles.css" asp-append-version="true" />
+    <style>
+        /* Navbar 主色改深藍 */
+        nav.navbar {
+            font-size: 1rem;
+            background-color: #003366 !important;
+        }
+
+            nav.navbar .nav-link {
+                color: #fff !important;
+                padding: 0.5rem 1rem;
+                transition: background-color 0.3s ease, color 0.3s ease;
+            }
+
+                nav.navbar .nav-link:hover,
+                nav.navbar .nav-link:focus {
+                    background-color: #0055aa !important;
+                    color: #fff !important;
+                }
+
+            /* Dropdown 白底，hover 深藍底白字 */
+            nav.navbar .dropdown-menu {
+                background-color: #fff;
+                min-width: 12rem;
+                box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+            }
+
+            nav.navbar .dropdown-item {
+                color: #003366;
+                transition: background-color 0.3s ease, color 0.3s ease;
+            }
+
+                nav.navbar .dropdown-item:hover,
+                nav.navbar .dropdown-item:focus {
+                    background-color: #003366 !important;
+                    color: #fff !important;
+                }
+
+        /* User dropdown 按鈕 */
+        .btn-link.dropdown-item {
+            color: #003366;
+            padding: 0.25rem 1rem;
+        }
+
+            .btn-link.dropdown-item:hover,
+            .btn-link.dropdown-item:focus {
+                color: #0055aa;
+                text-decoration: none;
+                background-color: transparent;
+            }
+
+        /* Footer 深灰底白字 */
+        footer.footer {
+            background-color: #212529;
+            padding: 1rem 0;
+            font-size: 0.9rem;
+            text-align: center;
+            color: #fff;
+        }
+
+            footer.footer a {
+                color: #66b2ff;
+                text-decoration: none;
+                margin: 0 0.5rem;
+                transition: color 0.3s ease;
+            }
+
+                footer.footer a:hover {
+                    color: #99ccff;
+                    text-decoration: underline;
+                }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Knowledge" asp-action="Home">
+                                <i class="fas fa-home"></i> Home
+                            </a>
+                        </li>
+                        <li class="nav-item mx-2">
+                            <a class="nav-link" asp-controller="Knowledge" asp-action="Create">
+                                Create Knowledge
+                            </a>
+                        </li>
+                        <li class="nav-item mx-2">
+                            <a class="nav-link" asp-controller="Knowledge" asp-action="Browsing">
+                                Knowledge Browsing
+                            </a>
+                        </li>
+                        <li class="nav-item mx-2">
+                            <a class="nav-link" asp-controller="Knowledge" asp-action="Draft">
+                                Draft
+                            </a>
+                        </li>
+                        <li class="nav-item mx-2">
+                            <a class="nav-link" asp-controller="Comment" asp-action="Index">
+                                Comment
+                            </a>
+                        </li>
+                        <li class="nav-item mx-2">
+                            <a class="nav-link" asp-controller="Knowledge" asp-action="Attention">
+                                Attention
+                            </a>
+                        </li>
+                        <li class="nav-item mx-2">
+                            <a class="nav-link" asp-controller="User" asp-action="Profile">
+                                Personal Information
+                            </a>
+                        </li>
+                    </ul>
+
+                    <ul class="navbar-nav ms-auto">
+                        @if (isAuthenticated)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-user-circle"></i> @userName
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                    <li>
+                                        <form asp-controller="User" asp-action="Profile" method="post" class="dropdown-item m-0 p-0">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-link dropdown-item text-start">Enter Personal Space</button>
+                                        </form>
+                                    </li>
+                                    @if (isAdmin)
+                                    {
+                                        <li>
+                                            <form asp-controller="Home" asp-action="ToggleLayout" method="post" class="dropdown-item m-0 p-0">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-link dropdown-item text-start">Switch</button>
+                                            </form>
+                                        </li>
+                                    }
+                                    <li>
+                                        <a class="dropdown-item text-start" href="@Url.Action("ChangePassword", "User")">
+                                            Change Password
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <form asp-controller="Login" asp-action="Logout" method="post" class="dropdown-item m-0 p-0">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-link dropdown-item text-start">Logout</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Login" asp-action="Index">
+                                    <i class="fas fa-sign-in-alt"></i> Login
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="footer border-top">
+        <div class="container">
+            &copy; 2025 - DIP
+            &nbsp; &nbsp; Link :
+            <a href="https://www.dbmaker.com.tw/" target="_blank">DBMJ</a> |
+            <a href="https://www.baidu.com/" target="_blank">Baidu</a> |
+            <a href="https://www.sohu.com/" target="_blank">Sohu</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

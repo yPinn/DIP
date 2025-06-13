@@ -1,0 +1,50 @@
+﻿@model DIP.Models.SysUser
+
+@{
+    ViewData["Title"] = "編輯使用者";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Edit" method="post">
+    @Html.AntiForgeryToken()
+
+    @* 保留 UserId 作為隱藏欄位來回傳，雖然不能修改，但仍需作為辨識用途 *@
+    <input type="hidden" asp-for="UserId" />
+
+    <div class="form-group mt-3">
+        <label asp-for="UserLogid"></label>
+        <input asp-for="UserLogid" class="form-control" readonly />
+        <span asp-validation-for="UserLogid" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mt-3">
+        <label asp-for="UserName"></label>
+        <input asp-for="UserName" class="form-control" />
+        <span asp-validation-for="UserName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mt-3">
+        <label asp-for="UserMail"></label>
+        <input asp-for="UserMail" class="form-control" />
+        <span asp-validation-for="UserMail" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mt-3">
+        <label asp-for="Activeflag"></label>
+        <select asp-for="Activeflag" class="form-control">
+            <option value="Y">啟用</option>
+            <option value="N">停用</option>
+        </select>
+        <span asp-validation-for="Activeflag" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">儲存</button>
+    <a asp-action="Index" class="btn btn-secondary mt-3 mx-2">取消</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

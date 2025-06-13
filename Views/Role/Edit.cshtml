@@ -1,0 +1,51 @@
+﻿@model DIP.Models.SysRole
+
+@{
+    ViewData["Title"] = "Edit Role";
+}
+
+<h2>Edit Role</h2>
+
+<form asp-action="Edit" method="post">
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" asp-for="RoleId" />
+
+    <div class="form-group">
+        <label asp-for="RoleId"></label>
+        <input asp-for="RoleId" class="form-control" disabled />
+        <span asp-validation-for="RoleId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="RolenameTw"></label>
+        <input asp-for="RolenameTw" class="form-control" />
+        <span asp-validation-for="RolenameTw" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="RoleDesc"></label>
+        <input asp-for="RoleDesc" class="form-control" />
+        <span asp-validation-for="RoleDesc" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ActiveFlag"></label>
+        <select asp-for="ActiveFlag" class="form-control">
+            <option value="Y">Active</option>
+            <option value="N">Inactive</option>
+        </select>
+        <span asp-validation-for="ActiveFlag" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+@{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+
+    }
+
+}

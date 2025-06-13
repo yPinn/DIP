@@ -1,0 +1,72 @@
+﻿@model KnowledgeCreateViewModel
+
+<input type="hidden" asp-for="KfFileId" />
+
+<!-- 第一列: 標題與分類 -->
+<div style="display:flex; gap: 80px;">
+    <div class="form-group mt-3" style="flex: 1;">
+        <label asp-for="KfFileName" class="control-label">Title</label>
+        <input asp-for="KfFileName" class="form-control" />
+        <span asp-validation-for="KfFileName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mt-3" style="flex: 1;">
+        <label asp-for="KfFileTypeId" class="control-label">Knowledge Classification</label>
+        <select asp-for="KfFileTypeId" class="form-control" asp-items="Model.KfFileTypeSelectList"></select>
+        <span asp-validation-for="KfFileTypeId" class="text-danger"></span>
+
+
+        <span asp-validation-for="KfFileTypeId" class="text-danger"></span>
+    </div>
+</div>
+
+<!-- 簡介 -->
+<div class="form-group mt-3" style="width: 100%;">
+    <label asp-for="KfBrief" class="control-label">Introduction</label>
+    <textarea asp-for="KfBrief" class="form-control" style="height: 150px;"></textarea>
+    <span asp-validation-for="KfBrief" class="text-danger"></span>
+</div>
+
+
+
+<!-- 第二列: 標籤與發佈類型 -->
+<div style="display:flex; gap: 80px;">
+    <div class="form-group mt-3" style="flex: 1;">
+        <label asp-for="KfLabel" class="control-label">Knowledge Label</label>
+        <input asp-for="KfLabel" class="form-control" />
+        <span asp-validation-for="KfLabel" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mt-3" style="flex: 1;">
+        <label class="control-label">Publication Type</label><br />
+        @foreach (var item in Model.StatusOptions)
+        {
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio"
+                       name="KfStatus"
+                       value="@item.DataValue"
+                       @(Convert.ToInt32(item.DataValue) == Model.KfStatus ? "checked" : "") />
+                <label class="form-check-label">@item.DataNameTw</label>
+            </div>
+        }
+        <span asp-validation-for="KfStatus" class="text-danger"></span>
+    </div>
+</div>
+
+<!-- 內容：使用 CKEditor -->
+<div class="form-group mt-3" style="width:100%;">
+    <label for="editor" class="control-label">Contents</label>
+    <textarea id="editor" name="KfFileContent" class="form-control">
+        @Html.Raw(Model.KfFileContent)
+    </textarea>
+    <span asp-validation-for="KfFileContent" class="text-danger"></span>
+</div>
+
+
+<style>
+    label.control-label {
+        font-weight: 700;
+        color: #005a9e;
+        font-size: 1.1rem;
+    }
+</style>

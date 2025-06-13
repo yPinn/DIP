@@ -1,0 +1,26 @@
+﻿@model DIP.Models.KmsFriendlink
+@{
+    ViewData["Title"] = "新增友情連結";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="CreateLink">
+    <div class="form-group mt-2">
+        <label asp-for="LinkSeq"></label>
+        <input asp-for="LinkSeq" class="form-control" />
+        <span asp-validation-for="LinkSeq" class="text-danger"></span>
+    </div>
+    <div class="form-group mt-2">
+        <label asp-for="NameTw">名稱</label>
+        <input asp-for="NameTw" class="form-control" />
+        <span asp-validation-for="NameTw" class="text-danger"></span>
+    </div>
+    <div class="form-group mt-2">
+        <label asp-for="Link">連結</label>
+        <input asp-for="Link" class="form-control" />
+        <span asp-validation-for="Link" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary mt-2">新增</button>
+    <a asp-action="Links" class="btn btn-secondary mt-2 mx-2">返回</a>
+</form>

@@ -1,0 +1,41 @@
+﻿@model List<RankingViewModel>
+
+<div class="ranking-container my-4">
+    <h2 class="mb-3 text-center">用戶排名列表</h2>
+    <p class="text-center text-muted mb-4">
+        依照知識文章數量、讚好評論數、訪問次數等多維度統計，展示前幾名用戶的綜合排名。
+    </p>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped table-hover text-center align-middle">
+            <thead class="table-primary">
+                <tr>
+                    <th scope="col" style="width: 5%;">排名</th>
+                    <th scope="col" style="width: 15%;">暱稱</th>
+                    <th scope="col" style="width: 12%;">知識數量</th>
+                    <th scope="col" style="width: 12%;">讚好文章數</th>
+                    <th scope="col" style="width: 15%;">讚好評論總數</th>
+                    <th scope="col" style="width: 12%;">負評文章數</th>
+                    <th scope="col" style="width: 15%;">負評評論總數</th>
+                    <th scope="col" style="width: 14%;">訪問次數</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    var user = Model[i];
+                    <tr class="@(i % 2 == 0 ? "table-light" : "table-warning")">
+                        <td>@(i + 1)</td>
+                        <td>@user.Nickname</td>
+                        <td>@user.KnowledgeQuantity</td>
+                        <td>@user.FavourableArticles</td>
+                        <td>@user.TotalFavourableReviews</td>
+                        <td>@user.BadArticles</td>
+                        <td>@user.TotalBadReviews</td>
+                        <td>@user.TotalVisits</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

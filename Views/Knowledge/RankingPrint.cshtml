@@ -1,0 +1,135 @@
+﻿@model List<RankingViewModel>
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    ViewData["Title"] = "Knowledge Ranking Print";
+    var sortBy = HttpContextAccessor.HttpContext?.Request.Query["sortBy"].ToString() ?? "default";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Knowledge Ranking Print</title>
+    <style>
+        html, 
+        .ranking-container {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        h2 {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .controls {
+            margin: 0 auto 15px auto;
+            text-align: center;
+        }
+
+        input[type="text"] {
+            padding: 6px 10px;
+            width: 250px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 6px 12px;
+            margin-left: 10px;
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+            button:hover {
+                background-color: #0b5ed7;
+            }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #cfe2ff;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f1f3f5;
+        }
+
+        tbody tr:nth-child(odd) {
+            background-color: #fff3cd;
+        }
+    </style>
+
+</head>
+<div class="ranking-container">
+    <h2>Knowledge Ranking</h2>
+
+    <div class="controls">
+        <input type="text" id="nicknameSearch" placeholder="Search by nickname..." onkeyup="filterTable()" />
+        <button onclick="window.location.href='@Url.Action("ExportCsv", new { sortBy = sortBy })'">Export CSV</button>
+    </div>
+
+    <table id="rankingTable">
+        <thead>
+            <tr>
+                <th>Ranking</th>
+                <th>Nickname</th>
+                <th>Knowledge<br />Quantity</th>
+                <th>Favourable<br />Review Articles</th>
+                <th>Total<br />Favourable Reviews</th>
+                <th>Bad Review<br />Articles</th>
+                <th>Total<br />Bad Reviews</th>
+                <th>Total<br />Visits</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                var user = Model[i];
+                <tr>
+                    <td>@(i + 1)</td>
+                    <td>@user.Nickname</td>
+                    <td>@user.KnowledgeQuantity</td>
+                    <td>@user.FavourableArticles</td>
+                    <td>@user.TotalFavourableReviews</td>
+                    <td>@user.BadArticles</td>
+                    <td>@user.TotalBadReviews</td>
+                    <td>@user.TotalVisits</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <script>
+        function filterTable() {
+            const input = document.getElementById("nicknameSearch");
+            const filter = input.value.toLowerCase();
+            const rows = document.querySelectorAll("#rankingTable tbody tr");
+
+            rows.forEach(row => {
+                const nickname = row.cells[1].textContent.toLowerCase();
+                row.style.display = nickname.includes(filter) ? "" : "none";
+            });
+        }
+    </script>
+</div>
+</html>

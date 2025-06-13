@@ -1,0 +1,39 @@
+﻿@model KnowledgeViewModel
+
+@{
+    ViewData["Title"] = "Knowledge Retrieval";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="mb-3">
+    <form method="get" asp-action="Search" asp-controller="Knowledge">
+        <input type="text" name="keyword" value="@Model.Keyword" placeholder="請輸入關鍵字..." class="form-control" style="display:inline-block; width:300px;" />
+        <button type="submit" class="btn btn-primary">搜尋</button>
+        <a href="@Url.Action("Home", "Knowledge")" class="btn btn-secondary ms-2">返回首頁</a>
+    </form>
+</div>
+
+@if (!Model.SearchResults?.Any() ?? true)
+{
+    <div class="alert alert-info">查無符合「<strong>@Model.Keyword</strong>」的知識資料。</div>
+}
+else
+{
+    <div class="search-results">
+        <p>共找到 <strong>@Model.SearchResults.Count</strong> 筆與「<strong>@Model.Keyword</strong>」相關的知識資料：</p>
+        <ul class="list-group">
+            @foreach (var item in Model.SearchResults)
+            {
+                <li class="list-group-item">
+                    <div class="fw-bold">
+                        <a asp-action="Details" asp-controller="Knowledge" asp-route-id="@item.KfFileId">
+                            @item.KfFileName
+                        </a>
+                    </div>
+                    <div class="text-muted small">更新時間：@item.TxDate.ToString("yyyy-MM-dd HH:mm")</div>
+                </li>
+            }
+        </ul>
+    </div>
+}

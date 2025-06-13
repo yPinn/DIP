@@ -1,0 +1,65 @@
+﻿@model IEnumerable<KmsFileComment>
+
+@{
+    ViewData["Title"] = "留言列表";
+}
+
+<h2 class="mb-4 text-center">@ViewData["Title"]</h2>
+
+<table class="table table-bordered table-hover align-middle">
+    <thead class="table-light text-center">
+        <tr>
+            <th style="width: 10%">標題</th>
+            <th style="width: 20%">摘要</th>
+            <th style="width: 30%">留言內容</th>
+            <th style="width: 15%">留言者</th>
+            <th style="width: 15%">留言時間</th>
+            <th style="width: 10%">是否檢視</th>
+            <th style="width: 10%">操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            foreach (var comment in Model)
+            {
+                <tr>
+                    <td class="text-center">留言 @comment.KcId</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(comment.KcContent))
+                        {
+                            @(comment.KcContent.Length > 20 ? comment.KcContent.Substring(0, 20) + "..." : comment.KcContent)
+                        }
+                    </td>
+                    <td>@comment.KcContent</td>
+                    <td class="text-center">@((comment.User?.UserName) ?? "未知使用者")</td>
+                    <td class="text-center">@comment.KcTime?.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td class="text-center">
+                        @if (comment.AdminCheck == "Y")
+                        {
+                            <span class="text-success">已檢視</span>
+                        }
+                        else
+                        {
+                            <span class="text-danger">未檢視</span>
+                        }
+                    </td>
+                    <td class="text-center">
+                        <form asp-action="DeleteConfirmed" asp-controller="Comment" method="post" onsubmit="return confirm('確定要刪除這則留言嗎？');">
+                            <input type="hidden" name="id" value="@comment.KcId" />
+                            <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                            <button type="submit" class="btn btn-sm btn-danger">刪除</button>
+                        </form>
+
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="7" class="text-center">尚無留言資料</td>
+            </tr>
+        }
+    </tbody>
+</table>

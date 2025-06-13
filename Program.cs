@@ -19,7 +19,7 @@ builder.Services.AddDbContext<DipDbContext>(options =>
     options.UseMySql(connectionString,
                      ServerVersion.AutoDetect(connectionString)));
 
-// 修復 DataProtection 警告 - Docker 環境持久化
+// 修復 DataProtection 警告 - 需要加入正確的 using
 builder.Services.AddDataProtection()
     .PersistKeysToFileSystem(new DirectoryInfo("/tmp/keys"));
 
@@ -32,9 +32,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.SlidingExpiration = true;
         
         // Docker 環境中的 Cookie 設定
-        options.Cookie.SecurePolicy = app.Environment.IsDevelopment() 
-            ? CookieSecurePolicy.SameAsRequest 
-            : CookieSecurePolicy.Always;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
     });
 
 builder.Services.AddControllersWithViews(options =>
@@ -47,6 +45,7 @@ builder.Services.AddControllersWithViews(options =>
 
 builder.Services.AddAuthorization();
 
+// 建立應用程式
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
@@ -75,7 +74,6 @@ try
 }
 catch (Exception ex)
 {
-    // 在開發或 Docker 環境中記錄錯誤但不中斷啟動
     Console.WriteLine($"PermissionMiddleware 載入失敗: {ex.Message}");
 }
 
@@ -83,15 +81,15 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// 添加健康檢查端點供 Docker 使用
+// 添加健康檢查端點供 Docker 使用（允許匿名訪問）
 app.MapGet("/health", () => Results.Json(new { 
     status = "healthy", 
     timestamp = DateTime.UtcNow,
     application = "DIP",
     version = Environment.GetEnvironmentVariable("BUILD_NUMBER") ?? "1.0",
     environment = app.Environment.EnvironmentName,
-    database = "connected" // 可以加入資料庫連線檢查
-}));
+    database = "connected"
+})).AllowAnonymous();
 
 // 不需要驗證的測試端點
 app.MapGet("/ping", () => "pong").AllowAnonymous();
